@@ -51,6 +51,44 @@ kable(
   aling= "c", col.names = c("Rango", "Varianza", "Desviación estandar", "coeficiente de variación", "kurtosis", "Freq")) %>%
   kable_classic(full_width= F, html_font = "Cambria")%>%
   kable_styling(position = "center")
+
+## Agrupamos el dataser vivienda cali sólo por la variable zona, la cual queda guardada en el dataset precio_promedio_vivienda_zona
+precio_promedio_vivienda_zona <- group_by(vivienda_cali, zona)
+##Calculamos en pormedio del precio de las viviendas por cada zona.
+promedio_zona<-summarise(precio_promedio_vivienda_zona, precio_promedio=na.omit(mean(preciom)))
+### Gráfico pormedio de precios por zona
+ggplot(data=promedio_zona,aes(x=zona, y=precio_promedio, fill=zona)) +
+  geom_bar(stat = "identity", ) +
+  labs(title = "Precio promedio por zona",
+       x = "Zona",
+       y = "Precio promedio")+
+  theme(plot.title = element_text(hjust = 0.5))
+# Zona - Precio 
+ggplot(vivienda_cali,mapping=aes(x=zona, y=preciom )) +
+  geom_boxplot()+
+  labs(title = "Caja de bigotes por precio según zona",
+       x = "Zona",
+       y = "Precio promedio")+
+  theme(plot.title = element_text(hjust = 0.5))
+#Cantidad de viviendas construidas según precio y área por zona
+l<-vivienda_cali%>%
+  group_by(zona)
+ggplot(data = l) +
+  geom_point(mapping = aes(x =preciom, y =areaconst, color=zona),na.rm = TRUE)+
+  labs(title = "Cantidad de viviendas construidas según precio y área por zona",
+       x = "Precio",
+       y = "Área construida")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplot(data=l) +
+  geom_point(mapping = aes(x =preciom, y =areaconst))+
+  facet_grid(. ~ zona)+
+  labs(title = "Cantidad de viviendas construidas según precio y área por zona",
+       x = "Precio",
+       y = "Área construida")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+
 ### En esta parte comenzamos a realizar el análisis descriptivo para la variable precio para en ambas categorias del tipo de vivienda (Casa y Apartamento)
 apartamento <- filter(vivienda_cali, tipo=="Apartamento") #Creamos un nuevo dataset que contenga solo la categoría Apartamentos
 Casa <- filter(vivienda_cali, tipo=="Casa")# Creamos un nuevo dataser que contenga solo la categoría casa
@@ -136,6 +174,23 @@ kable(
               Promedio_Precio = mean(preciom)),
   caption= "Promedio del Área construida y Precio por estrato - Apartamento", aling= "c",colnames = c("Promedio área construida", "promedio Precio", "Kurtosis"))%>%
   kable_classic(full_width= F, html_font = "Cambria")
+
+##Precio según zona y tipo de vivienda.
+# Caja de bigotes - Casa
+ggplot(Casa,mapping=aes(x=zona, y=preciom, fill=zona)) +
+  geom_boxplot()+
+  labs(title = "Caja de bigotes por precio según zona - Vivienda Casa",
+       x = "Zona",
+       y = "Precio")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Caja de bigotes - Apartamento
+ggplot(apartamento,mapping=aes(x=zona, y=preciom, fill= zona)) +
+  geom_boxplot()+
+  labs(title = "Caja de bigotes por precio según zona - Vivienda Apartamento",
+       x = "Zona",
+       y = "Precio")+
+  theme(plot.title = element_text(hjust = 0.5))
 ## agrupamos a partir del dataser vivienda_cali, un dataset llamado vivienda_tipo, el cual contiene los datos agrupados por la variable tipo
 Vivienda_tipo <- group_by(vivienda_cali, tipo)
 ## En esta parte se crea un histograma para ver cuanttas casas y apartaemntos hay por cada cantidad de baños.
@@ -147,30 +202,9 @@ ggplot(data=Vivienda_tipo, aes( x= banios, fill=tipo))+
   scale_fill_discrete(name = "Tipo de Vivienda")+
   scale_x_continuous(breaks = seq(min(Vivienda_tipo$banios), max(Vivienda_tipo$banios), 1))+
   theme(plot.title = element_text(hjust = 0.5))
-## Agrupamos el dataser vivienda cali sólo por la variable zona, la cual queda guardada en el dataset precio_promedio_vivienda_zona
-precio_promedio_vivienda_zona <- group_by(vivienda_cali, zona)
-##Calculamos en pormedio del precio de las viviendas por cada zona.
-promedio_zona<-summarise(precio_promedio_vivienda_zona, precio_promedio=na.omit(mean(preciom)))
-### Gráfico pormedio de precios por zona
-ggplot(data=promedio_zona,aes(x=zona, y=precio_promedio, fill=zona)) +
-  geom_bar(stat = "identity", ) +
-  labs(title = "Precio promedio por zona",
-       x = "Zona",
-       y = "Precio promedio")+
-  theme(plot.title = element_text(hjust = 0.5))
-# Zona - Precio 
-ggplot(vivienda_cali,mapping=aes(x=zona, y=preciom )) +
-  geom_boxplot()+
-  labs(title = "Caja de bigotes por precio según zona",
-       x = "Zona",
-       y = "Precio promedio")+
-  theme(plot.title = element_text(hjust = 0.5))
-#Cantidad de viviendas construidas según precio y área por zona
-l<-vivienda_cali%>%
-  group_by(zona)
-ggplot(data = l) +
-  geom_point(mapping = aes(x =preciom, y =areaconst, color=zona),na.rm = TRUE)+
-  labs(title = "Cantidad de viviendas construidas según precio y área por zona",
-       x = "Precio",
-       y = "Área construida")+
+# Precio según cantidad de baños por tipo de vivienda
+ggplot(data = vivienda_cali) +
+  geom_point(mapping = aes(x =preciom, y =banios, color=tipo))+
+  labs(title = "Precio según cantidad de baños por tipo de vivenda", x = "Precio", y = "Cantidad de baños")+
+  scale_color_discrete(name = "Estrato")+
   theme(plot.title = element_text(hjust = 0.5))
