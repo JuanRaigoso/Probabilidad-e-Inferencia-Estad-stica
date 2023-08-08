@@ -1,14 +1,15 @@
 ### Librerias a utilizar
-library(mice)
-library(tidyverse)
-library(stats)
-library(DT)
-library(kableExtra)
-library(ggmap)
-library(modeest)
-library(psych)
-library(moments)
-library(kableExtra)
+library(mice) ## Para los valores faltantes
+library(tidyverse) ## El caballo de batallas
+library(stats) ## para los indicadores de centro y variabilidad
+library(DT) ## Para las tablas
+library(kableExtra) ## Para las tablas
+library(modeest) ## Para sacar la moda
+library(psych) ## Para las correlaciones
+library(moments) ## Indicador Kurtosis
+library(kableExtra) ## Realizar las tablas en RMD
+library(ggcorrplot) ## Realizar gráfico de correlación
+library(corrplot) ## Realizar gráfico de correlación
 ###Cargamos la base de datos desde nuestro directorio
 vivienda_cali <- read_csv("C:/Users/juanr/OneDrive/Escritorio/U Javeriana/Primer semestre/Métodos Y simulación estadística/Unidad N°1/vivienda_faltantes.csv",
                                na = "NA")
@@ -208,3 +209,9 @@ ggplot(data = vivienda_cali) +
   labs(title = "Precio según cantidad de baños por tipo de vivenda", x = "Precio", y = "Cantidad de baños")+
   scale_color_discrete(name = "Estrato")+
   theme(plot.title = element_text(hjust = 0.5))
+## Corrlación variables
+
+
+
+
+
