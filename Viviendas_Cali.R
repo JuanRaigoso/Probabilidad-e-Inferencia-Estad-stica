@@ -209,9 +209,25 @@ ggplot(data = vivienda_cali) +
   labs(title = "Precio según cantidad de baños por tipo de vivenda", x = "Precio", y = "Cantidad de baños")+
   scale_color_discrete(name = "Estrato")+
   theme(plot.title = element_text(hjust = 0.5))
-## Corrlación variables
-
-
+## Correlación variables
+#Correlación variables - Casa.
+#Se extraen solo las variables cuantitativas de la datafra Casa
+Casa1 <- select(Casa, Piso=piso, Estrao=estrato,Precio=preciom,Área_construida=areaconst,Cantidad_Parqueaderos=parquea,Cantidad_baños=banios, Cantidad_habitaciones=habitac)
+#Matriz de correlación.
+Casa_cor <- cor(Casa1)
+#Mapa de correlación
+ggcorrplot(Casa_cor, type = "upper", lab = TRUE)+
+  labs(title = "Mapa de Correlación - Casa")+
+  theme(plot.title = element_text(hjust = 0.5))
+#Correlación variables - Apartamento.
+#Se extraen solo las variables cuantitativas de la datafra apartamento.
+apartamento1 <- select(apartamento, Piso=piso, Estrao=estrato,Precio=preciom,Área_construida=areaconst,Cantidad_Parqueaderos=parquea,Cantidad_baños=banios, Cantidad_habitaciones=habitac)
+#Matriz de correlación.
+apartamento_cor <- cor(apartamento1)
+#Mapa de correlación
+ggcorrplot(apartamento_cor, type = "upper", lab = TRUE)+
+  labs(title = "Mapa de correlación - Apartamentos")+
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 
