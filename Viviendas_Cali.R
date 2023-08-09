@@ -35,7 +35,7 @@ kable(
 ## Cuartiles variable Precio
 ggplot(data=vivienda_cali)+
   geom_boxplot(mapping = aes(x=preciom), col = "green")+
-  labs(title = "Cuartiles", x = "Precio")+
+  labs(title = "Cuartiles", x = "Precio", y= "Porcentaje")+
   theme(plot.title = element_text(hjust = 0.5))
 ## Indicadores de Centro variable Precio
 kable(table(Media = mean(vivienda_cali$preciom), Mediana = median(vivienda_cali$preciom),
@@ -69,7 +69,7 @@ ggplot(vivienda_cali,mapping=aes(x=zona, y=preciom )) +
   geom_boxplot()+
   labs(title = "Caja de bigotes por precio según zona",
        x = "Zona",
-       y = "Precio promedio")+
+       y = "Precio")+
   theme(plot.title = element_text(hjust = 0.5))
 #Cantidad de viviendas construidas según precio y área por zona
 l<-vivienda_cali%>%
