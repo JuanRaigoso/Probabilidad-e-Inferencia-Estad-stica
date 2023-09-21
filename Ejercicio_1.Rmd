@@ -1,0 +1,76 @@
+---
+title: "Unidad N°2 - Métodos y simulación estadística"
+subtitle: "Ejercicio N° 1"
+author: "Juan David Raigoso Espinosa"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: lume
+    toc: yes
+    toc_float:
+      collapsed: true
+---
+
+  
+::: text-justify
+
+# PROBLEMA 1.
+
+## Estimación del valor de π.
+
+La siguiente figura sugiere como estimar el valor de π con una simulación. En la figura, un circuito con un área igual a π/4, está inscrito en un cuadrado cuya área es igual a 1. Se elige de forma aleatoria n  puntos dentro del cuadrado . La probabilidad de que un punto esté dentro del círculo es igual a la fracción del área del cuadrado que abarca a este, la cual es π/4. Por tanto, se puede estimar el valor de π/4 al contar el número de puntos dentro del círculo, para obtener la estimación de π/4. De este último resultado se encontrar una aproximación para el valor de π.
+:::
+
+![](pi.png)
+
+::: text-justify
+  Pasos sugeridos:
+
+  a) Genere n coordenadas $x: X_1, . . . , X_n$. Utilice la distribución uniforme con valor mínimo de 0 y valor máximo de 1. La distribución uniforme genera variables aleatorias que tienen la misma probabilidad de venir de cualquier parte del intervalo (0,1).
+  
+  b) Genere 1000 coordenadas $y : Y_1,...,Y_n$, utilizando nuevamente la distribución uniforme con valor mínimo de 0 y valor máximo de 1.
+  
+  c) Cada punto $(X_i,Y_i)$ se encuentra dentro del círculo si su distancia desde el centro (0.5,0.5) es menor a 0.5. Para cada par $(X_i,Y_i)$ determine si la distancia desde el centro es menor a 0.5. Esto último se puede realizar al calcular el valor $(X_i−0.5)^2+(Y_i−0.5)^2$, que es el cuadrado de la distancia, y al determinar si es menor que 0.25.
+  
+  d) ¿Cuántos de los puntos están dentro del círculo? ¿Cuál es su estimación de π?
+  
+:::
+  
+```{r}
+
+# Muestras
+n <- c(1000, 10000, 100000)
+
+# Función para estimar pi
+estimar_pi <- function(n) {
+  # Generar coordenadas X y Y
+  x <- runif(n, min = 0, max = 1)
+  y <- runif(n, min = 0, max = 1)
+  
+  # Calcular la distancia desde el centro
+  distancia_al_centro <- (x - 0.5)^2 + (y - 0.5)^2
+  
+  # Contar puntos dentro del círculo
+  puntos_dentro <- sum(distancia_al_centro < 0.25)
+  
+  # Estimación de PI
+  estimacion_pi_4 <- puntos_dentro / n
+    # Aproximaación de PI
+  aproximacion_pi <- estimacion_pi_4 * 4
+    return(list(puntos_dentro = puntos_dentro, aproximacion_pi = aproximacion_pi))
+}
+
+# Aplicamos todo lo anterior para cada una de las muestras
+resultados <- lapply(n, estimar_pi)
+
+# resultados
+for (i in 1:length(n)) {
+  cat("Muestra", n[i], "puntos\n")
+  cat("Puntos dentro del círculo:", resultados[[i]]$puntos_dentro, "\n")
+  cat("Estimación de π:", resultados[[i]]$aproximacion_pi, "\n\n")
+}
+
+```
+
+
+
