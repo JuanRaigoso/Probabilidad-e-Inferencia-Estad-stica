@@ -1,0 +1,138 @@
+---
+title: "Unidad N°2 - Métodos y simulación estadística"
+subtitle: "Ejercicio N° 3"
+author: "Juan David Raigoso Espinosa"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: lume
+    toc: yes
+    toc_float:
+      collapsed: true
+---
+
+# PROBLEMA 3.
+
+## Teorema del Límite Central.
+
+El Teorema del Límite Central es uno de los más importantes en la inferencia estadística y habla sobre la convergencia de los estimadores como la proporción muestral a la distribución normal. Algunos autores afirman que esta aproximación es bastante buena a partir del umbral n>30.
+
+A continuación se describen los siguientes pasos para su verificación:
+
+  a)	Realice una simulación en la cual genere una población de n=1000 (Lote), donde el
+  porcentaje de individuos (supongamos plantas) enfermas sea del 50%.
+  
+  b)	Genere una función que permita: 
+  Obtener una muestra aleatoria de la población y
+  Calcule el estimador de la proporción muestral pˆ para un tamaño de muestra dado n.
+
+  c) repita el escenario anterior (b) n=500 veces y analice los resultados en cuanto al
+  comportamiento de los 500   resultados del estimador pˆ. ¿Qué tan simétricos o sesgados son los
+  resultados obtenidos? y ¿qué se puede observar   en cuanto a la variabilidad?. Realice en su
+  informe un comentario sobre los resultados obtenidos.
+  
+  d)	Repita los puntos b y c para tamaños de muestra n=5, 10, 15, 20, 30, 50, 60, 100, 200, 500.
+  Compare los resultados obtenidos para los diferentes tamaños de muestra en cuanto a la
+  normalidad. Utilice pruebas de bondad y ajuste (shapiro wilks :shspiro.test()) y métodos
+  gráficos (gráfico de normalidad: qqnorm()). Comente en su informe los resultados obtenidos.
+  
+  e)	repita toda la simulación (puntos a – d), pero ahora para lotes con 10% de plantas enfermas
+  y de nuevo para lotes con un 90% de plantas enfermas. Concluya sobre los resultados del
+  ejercicio.
+::: 
+
+```{r}
+#semilla de reproducibilidad
+set.seed(123) 
+
+# Población de 1000 individuos con 50% de enfermos
+poblacion <- rep(c(0, 1), each = 500)
+# Función para obtener una muestra aleatoria y calcular p 
+obtener_muestra_p <- function(n) {
+  muestra <- sample(poblacion, size = n, replace = T)
+  estimador_p <- sum(muestra) / n
+  return(estimador_p)
+}
+# repetimos lo anterior para una muestra n=500 veces
+resultados <- replicate(500, obtener_muestra_p(1000))
+
+# Sacamos las propiedades de los estimadores
+simetria <- mean(resultados) - median(resultados)
+sesgo <- mean(resultados) - 0.5
+variabilidad <- var(resultados)
+
+# resultados de simetría, sesgo y variabilidad.
+cat("Simetría:", simetria, "\n")
+cat("Sesgo:", sesgo, "\n")
+cat("Variabilidad:", variabilidad, "\n")
+# Tamaños de muestra
+tamanos_muestra <- c(5, 10, 15, 20, 30, 50, 60, 100, 200, 500)
+
+# Función para realizar el análisis de normalidad
+analisis_normalidad <- function(n) {
+  # Repetimos n=500 veces
+  resultados <- replicate(500, obtener_muestra_p(n))
+  
+  # Prueba de Shapiro-Wilk
+  shapiro_result <- shapiro.test(resultados)
+  
+  # Gráfico de los resultados
+  qqnorm(resultados)
+  qqline(resultados)
+  
+  # Comentario sobre los resultados
+  cat("Tamaño de muestra:", n, "\n")
+  cat("Prueba de Shapiro-Wilk:", shapiro_result$p.value, "\n")
+  cat("\n")
+}
+
+# Realizamos el análisis de normalidad para cada tamaño de muestra
+for (n in tamanos_muestra) {
+  analisis_normalidad(n)
+}
+# Porcentaje de plantas enfermas 10% y 90%
+porcentajes_enfermas <- c(10, 90)
+
+# Realizamos la simulación para cada porcentaje de plantas enfermas
+for (p in porcentajes_enfermas) {
+  
+  # Generamos una población con el porcentaje de plantas enfermas dado
+  poblacion <- rep(c(0, 1), each = 500 * (p / 100))
+  
+  cat("Porcentaje de plantas enfermas:", p, "%\n")
+  
+  # Repettimos los puntos b y c
+  resultados <- replicate(500, obtener_muestra_p(1000))
+  simetria <- mean(resultados) - median(resultados)
+  sesgo <- mean(resultados) - (p / 100)
+  variabilidad <- var(resultados)
+  
+  cat("Simetría:", simetria, "\n")
+  cat("Sesgo:", sesgo, "\n")
+  cat("Variabilidad:", variabilidad, "\n")
+  
+  # Repetimos el punto d
+  for (n in tamanos_muestra) {
+    analisis_normalidad(n)
+  }
+  
+  cat("\n")
+}
+```
+
+
+::: text-justify
+
+## Análisis de resultados.
+
+Con respecto al punto **C)**. ¿Qué tan simétricos o sesgados son los resultados obtenidos? y ¿qué se puede observar en cuanto a la variabilidad?
+
+Podemos decir que se realiza una simulación de 500 veces de la cual se observa que la simetría tiende ser cercana a cero, lo que nos dice que la diferencia entre la media y la mediana es muy poca. De acuerdo con lo anterior, se puede decir que los datos son simétricos.
+
+Por otro lado, podemos observar que el sesgo también tiende a ser cercano a cero, lo cual indica que los datos no presentan sesgos, sino que están centrados.
+Y por el lado de la variabilidad, ésta es relativamente baja, también posee un valor cercano a cero, es decir, que los datos se dispersar alrededor de la media. 
+
+Con respuesta al punto **D)**, podemos concluir que al realizar el test de Shapiro-Wilk y el método de normalidad en cada una de las muestras, los datos muestran que a medida que aumenta la muestra los estimadores tienden a tener una distribución normal. Eso se evidencia con el test de Shapiro-Wilk, pues los valores que este test arroja es que a medida que va a aumentando la muestra este tiende a ser más grande, mostrando que los estimadores se acercan a la distribución normal, como ya se había mencionado.
+
+Y con respecto al punto D, en el cual se realiza todos los pasos anteriores, pero dividido en 2 porcentajes 10% y 90% en plantas enfermas, lo cual analizamos que a medida que aumenta el porcentaje de 10 a 90 los resultados de simetría, sesgo y variabilidad tienden acercarse más a cero indicando que los estimadores son más precisos, esto se debe ya que hay una mayor proporción de enfermos.
+::::
