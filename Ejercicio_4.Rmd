@@ -1,0 +1,65 @@
+---
+title: "Unidad N°2 - Métodos y simulación estadística"
+subtitle: "Ejercicio N° 4"
+author: "Juan David Raigoso Espinosa"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: lume
+    toc: yes
+    toc_float:
+      collapsed: true
+---
+
+::: text-justify
+# PROBLEMA 4.
+
+## Estimacción boostrap.
+
+Cuando se extrae una muestra de una población que no es normal y se requiere estimar un  intervalo de confianza se pueden utilizar los métodos de estimación bootstrap. Esta metodología supone que se puede reconstruir la población objeto de estudio mediante un muestreo con reemplazo de la muestra que se tiene. Existen varias versiones del método. Una presentación básica del método se describe a continuación:
+:::
+
+```{r}
+# Datos de la muestra
+muestras <- c(7.69, 4.97, 4.56, 6.49, 4.34, 6.24, 4.45)
+
+# Tamaño de la muestra
+n <- length(muestras)
+
+# Número de muestras bootstrap
+k <- 1000
+
+# Vector para almacenar las medias de las muestras bootstrap
+medias_bootstrap <- vector(length = k)
+
+# Generación de las muestras bootstrap
+# Establecer una semilla para reproducibilidad
+set.seed(123)  
+for (i in 1:k) {
+  muestra_bootstrap <- sample(muestras, replace = TRUE)
+  medias_bootstrap[i] <- mean(muestra_bootstrap)
+}
+
+# Método 1:
+intervalo_metodo1 <- quantile(medias_bootstrap, probs = c(0.025, 0.975))
+
+# Método 2:
+media_muestras <- mean(muestras)
+intervalo_metodo2 <- c(2 * media_muestras - intervalo_metodo1[2], 
+                       2 * media_muestras - intervalo_metodo1[1])
+
+# Imprimimos los resultados
+print("Intervalo de confianza (Método 1):")
+intervalo_metodo1
+print('Intervalo de confianza (Método 2):')
+intervalo_metodo2
+```
+
+::: text-justify
+
+## Análisis de resultados.
+
+Analizando los resultados, el método 1 nos da a un nivel de confianza del 95% un intervalo de Límite inferior (2.5%): 4.748393 y Límite superior (97.5%): 6.508643; y el método 2 a un nivel de confianza del 95% nos da un intervalo de confianza entre Límite inferior (2.5%): 4.559929 y Límite superior (97.5%): 6.320179. De acuerdo con esto, no hay una gran diferencia entre los intervalos obtenidos en ambos métodos.
+
+En relación con la confiabilidad de los resultados de los métodos, podríamos decir que, sí confiaría en estos resultados, pues ambos métodos suministran intervalos de confianza confiables, aunque cabe decir, como no conocemos la población total de camiones (No sabemos el total de la población), no sabemos si la muestra sea confiable (Hay una incertidumbre). Sin embargo, pues al repetir 1000 muestras Bootstrap nos arroja que los intervalos de confianza al 95% son muy similares en ambos métodos.
+:::
